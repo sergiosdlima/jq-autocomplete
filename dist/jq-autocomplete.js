@@ -35,7 +35,7 @@
     function createItems(field, opts) {
         var lookup = field.val();
         if (lookup.length < opts.treshold) {
-            field.dropdown('hide');
+            hideDropdown(field);
             return 0;
         }
         var items = field.next();
@@ -65,8 +65,15 @@
                     label: $(this).text()
                 }, field[0]);
             }
+            hideDropdown(field);
         });
         return items.children().length;
+    }
+    function showDropdown(field) {
+        field.next().css({ display: 'block' });
+    }
+    function hideDropdown(field) {
+        field.next().css({ display: 'none' });
     }
     $.fn.autocomplete = function (options) {
         // merge options with default
@@ -74,37 +81,36 @@
         $.extend(opts, defaults, options);
         var _field = $(this);
         // clear previously set autocomplete
-        _field.parent().removeClass('dropdown');
-        _field.removeAttr('data-toggle');
-        _field.removeClass('dropdown-toggle');
         _field.parent().find('.dropdown-menu').remove();
-        _field.dropdown('dispose');
         // attach dropdown
-        _field.parent().addClass('dropdown');
-        _field.attr('data-toggle', 'dropdown');
-        _field.addClass('dropdown-toggle');
-        var dropdown = $('<div class="dropdown-menu" ></div>');
+        var dropdown = $('<div class="dropdown-menu"></div>');
         // attach dropdown class
         if (opts.dropdownClass)
             dropdown.addClass(opts.dropdownClass);
+        dropdown.css({ position: 'absolute', top: _field.outerHeight(), left: 0, display: 'none' }); // styling for positioning
         _field.after(dropdown);
-        _field.dropdown(opts.dropdownOptions);
         this.off('click.autocomplete').click('click.autocomplete', function (e) {
             if (createItems(_field, opts) == 0) {
-                // prevent show empty
+                hideDropdown(_field);
                 e.stopPropagation();
-                _field.dropdown('hide');
-            }
-            ;
-        });
-        // show options
-        this.off('keyup.autocomplete').keyup('keyup.autocomplete', function () {
-            if (createItems(_field, opts) > 0) {
-                _field.dropdown('show');
             }
             else {
-                // sets up positioning
-                _field.click();
+                showDropdown(_field);
+            }
+        });
+        // show options on keyup
+        this.off('keyup.autocomplete').keyup('keyup.autocomplete', function () {
+            if (createItems(_field, opts) > 0) {
+                showDropdown(_field);
+            }
+            else {
+                hideDropdown(_field);
+            }
+        });
+        // hide dropdown when clicking outside
+        $(document).click(function (e) {
+            if (!$(e.target).closest(_field).length) {
+                hideDropdown(_field);
             }
         });
         return this;

@@ -4,7 +4,6 @@ interface AutocompleteItem {
 }
 
 interface AutocompleteOptions {
-    dropdownOptions?: Bootstrap.DropdownOption,
     dropdownClass?: string | string[],
     highlightClass?: string | string[],
     highlightTyped?: boolean,
@@ -20,7 +19,7 @@ interface JQuery {
     autocomplete(options: AutocompleteOptions): JQuery<HTMLElement>;
 }
 
-(function ( $ ) {
+(function($) {
 
     let defaults: AutocompleteOptions = {
         treshold: 4,
@@ -29,13 +28,13 @@ interface JQuery {
         highlightClass: 'text-primary',
     };
 
-    function createItem(lookup: string, item: AutocompleteItem, opts: AutocompleteOptions):string {
+    function createItem(lookup: string, item: AutocompleteItem, opts: AutocompleteOptions): string {
         let label: string;
         if (opts.highlightTyped) {
             const idx = item.label.toLowerCase().indexOf(lookup.toLowerCase());
             label = item.label.substring(0, idx)
-                    + '<span class="' + expandClassArray(opts.highlightClass) + '">' + item.label.substring(idx, idx + lookup.length) + '</span>'
-                    + item.label.substring(idx + lookup.length, item.label.length);
+                + '<span class="' + expandClassArray(opts.highlightClass) + '">' + item.label.substring(idx, idx + lookup.length) + '</span>'
+                + item.label.substring(idx + lookup.length, item.label.length);
         } else {
             label = item.label;
         }
@@ -59,7 +58,7 @@ interface JQuery {
     function createItems(field: JQuery<HTMLElement>, opts: AutocompleteOptions) {
         const lookup = field.val() as string;
         if (lookup.length < opts.treshold) {
-            field.dropdown('hide');
+            hideDropdown(field);
             return 0;
         }
 
@@ -73,11 +72,11 @@ interface JQuery {
             const object = opts.source[key];
             const item = {
                 label: opts.label ? object[opts.label] : key,
-                value: opts.value ? object[opts.value]: object,
+                value: opts.value ? object[opts.value] : object,
             };
             if (item.label.toLowerCase().indexOf(lookup.toLowerCase()) >= 0) {
                 items.append(createItem(lookup, item, opts));
-                if (opts.maximumItems > 0 &&  ++count >= opts.maximumItems) {
+                if (opts.maximumItems > 0 && ++count >= opts.maximumItems) {
                     break;
                 }
             }
@@ -92,9 +91,18 @@ interface JQuery {
                     label: $(this).text(),
                 }, field[0]);
             }
+            hideDropdown(field);
         });
 
         return items.children().length;
+    }
+
+    function showDropdown(field: JQuery<HTMLElement>) {
+        field.next().css({ display: 'block' });
+    }
+
+    function hideDropdown(field: JQuery<HTMLElement>) {
+        field.next().css({ display: 'none' });
     }
 
     $.fn.autocomplete = function(options) {
@@ -105,41 +113,40 @@ interface JQuery {
         let _field = $(this);
 
         // clear previously set autocomplete
-        _field.parent().removeClass('dropdown');
-        _field.removeAttr('data-toggle');
-        _field.removeClass('dropdown-toggle');
         _field.parent().find('.dropdown-menu').remove();
-        _field.dropdown('dispose');
-        
+
         // attach dropdown
-        _field.parent().addClass('dropdown');
-        _field.attr('data-toggle', 'dropdown');
-        _field.addClass('dropdown-toggle');
-        const dropdown = $('<div class="dropdown-menu" ></div>');
+        const dropdown = $('<div class="dropdown-menu"></div>');
         // attach dropdown class
         if (opts.dropdownClass) dropdown.addClass(opts.dropdownClass);
+        dropdown.css({ position: 'absolute', top: _field.outerHeight(), left: 0, display: 'none' }); // styling for positioning
         _field.after(dropdown);
 
-        _field.dropdown(opts.dropdownOptions);
-        
         this.off('click.autocomplete').click('click.autocomplete', function(e) {
             if (createItems(_field, opts) == 0) {
-                // prevent show empty
+                hideDropdown(_field);
                 e.stopPropagation();
-                _field.dropdown('hide');
-            };
+            } else {
+                showDropdown(_field);
+            }
         });
 
-        // show options
+        // show options on keyup
         this.off('keyup.autocomplete').keyup('keyup.autocomplete', function() {
             if (createItems(_field, opts) > 0) {
-                _field.dropdown('show');
+                showDropdown(_field);
             } else {
-                // sets up positioning
-                _field.click();
+                hideDropdown(_field);
+            }
+        });
+
+        // hide dropdown when clicking outside
+        $(document).click(function(e) {
+            if (!$(e.target).closest(_field).length) {
+                hideDropdown(_field);
             }
         });
 
         return this;
     };
-}( jQuery ));
+}(jQuery));

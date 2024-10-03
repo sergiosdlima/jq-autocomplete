@@ -3,6 +3,7 @@ const del = require('del');
 const rename = require('gulp-rename');
 const typescript = require('gulp-typescript');
 const uglify = require('gulp-uglify');
+const cleanCss = require('gulp-clean-css');
 
 const target = 'dist';
 
@@ -19,16 +20,24 @@ function compile() {
 }
 
 function min() {
-    return src(target + '/bootstrap-4-autocomplete.js')
+    return src(target + '/jq-autocomplete.js')
         .pipe(uglify())
-        .pipe(rename('bootstrap-4-autocomplete.min.js'))
+        .pipe(rename('jq-autocomplete.min.js'))
+        .pipe(dest(target));
+}
+
+function minCss() {
+    return src('src/jq-autocomplete.css')
+        .pipe(cleanCss())
+        .pipe(rename('jq-autocomplete.min.css'))
         .pipe(dest(target));
 }
 
 const build = series(
     clean,
     compile,
-    min
+    min,
+    minCss
 );
 
 exports.default = build;

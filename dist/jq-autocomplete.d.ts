@@ -3,7 +3,6 @@ interface AutocompleteItem {
     label: string;
 }
 interface AutocompleteOptions {
-    dropdownOptions?: Bootstrap.DropdownOption;
     dropdownClass?: string | string[];
     highlightClass?: string | string[];
     highlightTyped?: boolean;

@@ -1,4 +1,4 @@
-# Bootstrap 4 Autocomplete
+# jQuery Autocomplete
 
 [![Travis](https://img.shields.io/travis/honatas/bootstrap-4-autocomplete?style=plastic)](https://travis-ci.org/Honatas/bootstrap-4-autocomplete "View the build on Travis")
 [![David](https://img.shields.io/david/honatas/bootstrap-4-autocomplete?style=plastic)](https://david-dm.org/honatas/bootstrap-4-autocomplete "View the dependencies status on David")
@@ -7,9 +7,9 @@
 [![typescript](https://img.shields.io/badge/made%20with-Typescript-blue?style=plastic)](https://www.typescriptlang.org/ "Try Typescript")
 [![coffee](https://img.shields.io/badge/buy%20me%20a-coffee-brown?style=plastic)](https://ko-fi.com/honatas "Buy me a coffee")
 
-A very small (less than 2Kb) autocomplete/typeahead for Bootstrap 4 and jQuery.  
+A very small (less than 2Kb) autocomplete/typeahead for jQuery.  
 
-It uses the default [Dropdown](https://getbootstrap.com/docs/4.3/components/dropdowns/) component from Bootstrap 4 to create the list of autocomplete items.
+It simulate the default [Dropdown](https://getbootstrap.com/docs/4.3/components/dropdowns/) component from Bootstrap 4 to create the list of autocomplete items.
 
 
 
@@ -17,17 +17,15 @@ It uses the default [Dropdown](https://getbootstrap.com/docs/4.3/components/drop
 
 You can get it from npm:
 
-    npm install bootstrap-4-autocomplete
+    npm install jq-autocomplete
 
 Or you can get it from a CDN. Just be careful to add it to your HTML **AFTER** Jquery, Popperjs and Bootstrap:
 
 ```html
 <!-- Dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-<!-- Bootstrap 4 Autocomplete -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-4-autocomplete/dist/bootstrap-4-autocomplete.min.js" crossorigin="anonymous"></script>
+<!-- jq Autocomplete -->
+<script src="https://cdn.jsdelivr.net/npm/jq-autocomplete/dist/jq-autocomplete.min.js" crossorigin="anonymous"></script>
 ```
 
 
